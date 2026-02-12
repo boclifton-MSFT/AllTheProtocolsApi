@@ -1,0 +1,103 @@
+@Api_HostAddress = http://localhost:5249
+
+### Get all weather stations
+GET {{Api_HostAddress}}/api/weather/stations
+Accept: application/json
+
+### Filter stations by state (Florida)
+GET {{Api_HostAddress}}/api/weather/stations?state=CO
+Accept: application/json
+
+### Get a single station by ID (Denver)
+GET {{Api_HostAddress}}/api/weather/stations/den01
+Accept: application/json
+
+### Get a single station by ID (Miami)
+GET {{Api_HostAddress}}/api/weather/stations/mia01
+Accept: application/json
+
+### Get a station that doesn't exist (expect 404)
+GET {{Api_HostAddress}}/api/weather/stations/xyz99
+Accept: application/json
+
+### Current conditions — Denver (dry, windy, high elevation)
+GET {{Api_HostAddress}}/api/weather/stations/den01/conditions
+Accept: application/json
+
+### Current conditions — Miami (humid, tropical, rain)
+GET {{Api_HostAddress}}/api/weather/stations/mia01/conditions
+Accept: application/json
+
+### Current conditions — Seattle (overcast, rainy)
+GET {{Api_HostAddress}}/api/weather/stations/sea01/conditions
+Accept: application/json
+
+### Current conditions — Phoenix (extreme heat, clear)
+GET {{Api_HostAddress}}/api/weather/stations/phx01/conditions
+Accept: application/json
+
+### Current conditions — Chicago (cold, snowy, windy)
+GET {{Api_HostAddress}}/api/weather/stations/chi01/conditions
+Accept: application/json
+
+### Daily forecast — Denver, default 5 days
+GET {{Api_HostAddress}}/api/weather/stations/den01/forecast/daily
+Accept: application/json
+
+### Daily forecast — Miami, full 7 days
+GET {{Api_HostAddress}}/api/weather/stations/mia01/forecast/daily?days=7
+Accept: application/json
+
+### Daily forecast — Chicago, 3-day outlook
+GET {{Api_HostAddress}}/api/weather/stations/chi01/forecast/daily?days=3
+Accept: application/json
+
+### Hourly forecast — Phoenix, next 6 hours
+GET {{Api_HostAddress}}/api/weather/stations/phx01/forecast/hourly?hours=6
+Accept: application/json
+
+### Hourly forecast — Seattle, full 24 hours
+GET {{Api_HostAddress}}/api/weather/stations/sea01/forecast/hourly
+Accept: application/json
+
+### Hourly forecast — Denver, next 12 hours
+GET {{Api_HostAddress}}/api/weather/stations/den01/forecast/hourly?hours=12
+Accept: application/json
+
+### Air quality — Phoenix (Unhealthy for Sensitive Groups, high PM10)
+GET {{Api_HostAddress}}/api/weather/stations/phx01/air-quality
+Accept: application/json
+
+### Air quality — Denver (Good)
+GET {{Api_HostAddress}}/api/weather/stations/den01/air-quality
+Accept: application/json
+
+### Air quality — Miami (Moderate, elevated O3)
+GET {{Api_HostAddress}}/api/weather/stations/mia01/air-quality
+Accept: application/json
+
+### All active alerts across all stations
+GET {{Api_HostAddress}}/api/weather/alerts
+Accept: application/json
+
+### Alerts filtered to Warning severity and above
+GET {{Api_HostAddress}}/api/weather/alerts?minSeverity=Warning
+Accept: application/json
+
+### Alerts for Chicago only (winter storm + high wind)
+GET {{Api_HostAddress}}/api/weather/alerts?stationId=chi01
+Accept: application/json
+
+### Alerts for Miami only (tropical storm + flood)
+GET {{Api_HostAddress}}/api/weather/alerts?stationId=mia01
+Accept: application/json
+
+### Alerts for Denver (expect empty array — no active alerts)
+GET {{Api_HostAddress}}/api/weather/alerts?stationId=den01
+Accept: application/json
+
+### Combined filter — Chicago, Warning+ severity only
+GET {{Api_HostAddress}}/api/weather/alerts?stationId=chi01&minSeverity=Warning
+Accept: application/json
+
+###

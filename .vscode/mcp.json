@@ -1,0 +1,8 @@
+{
+    "servers": {
+        "alltheprotocols-local": {
+            "type": "http",
+            "url": "http://localhost:5249/mcp"
+        }
+    }
+}

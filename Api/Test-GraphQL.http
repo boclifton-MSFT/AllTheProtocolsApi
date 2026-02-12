@@ -1,0 +1,63 @@
+@Api_HostAddress = http://localhost:5249
+
+### GraphQL - All stations
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ stations { id name location { city state latitude longitude elevationFt } status } }"}
+
+### GraphQL - Filter stations by state
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ stations(state: \"FL\") { id name location { city state } } }"}
+
+### GraphQL - Current conditions (nested types)
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ currentConditions(stationId: \"mia01\") { observedAt temperatureF feelsLikeF humidityPercent dewPointF pressureMb skyCondition uvIndex wind { speedMph direction gustsMph } precipitation { type amountInches probabilityPercent } } }"}
+
+### GraphQL - Current conditions in Celsius
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ currentConditions(stationId: \"den01\", unit: CELSIUS) { temperatureF feelsLikeF dewPointF skyCondition } }"}
+
+### GraphQL - 3-day daily forecast
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ dailyForecast(stationId: \"chi01\", days: 3) { date highTempF lowTempF skyCondition wind { speedMph direction gustsMph } precipitation { type probabilityPercent } sunrise sunset } }"}
+
+### GraphQL - Hourly forecast (next 6 hours)
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ hourlyForecast(stationId: \"phx01\", hours: 6) { dateTime temperatureF feelsLikeF skyCondition wind { speedMph direction } precipitation { probabilityPercent } } }"}
+
+### GraphQL - Active alerts (all)
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ activeAlerts { id title severity category affectedArea issuedAt expiresAt description } }"}
+
+### GraphQL - Alerts filtered by severity
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ activeAlerts(minSeverity: WARNING) { id title severity category affectedArea } }"}
+
+### GraphQL - Alerts for a specific station
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ activeAlerts(stationId: \"chi01\") { id title severity category } }"}
+
+### GraphQL - Air quality
+POST {{Api_HostAddress}}/graphql
+Content-Type: application/json
+
+{"query":"{ airQuality(stationId: \"phx01\") { aqi category primaryPollutant pollutants { key value } } }"}
+
+###
