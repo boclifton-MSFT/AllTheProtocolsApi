@@ -1,5 +1,7 @@
 # AllTheProtocolsApi
 
+![All The Protocols!!!](image.png)
+
 A single ASP.NET Core weather API that simultaneously exposes the same data through **three** different protocols — REST, GraphQL, and Model Context Protocol (MCP) — demonstrating how they can coexist in one application.
 
 ## Protocols at a Glance
