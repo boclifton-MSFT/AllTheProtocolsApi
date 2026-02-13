@@ -58,12 +58,27 @@ public class WeatherDataTools(IWeatherDataService weatherDataService)
     }
 
     [McpServerTool]
+    [Description("Gets active weather alerts for a station. Returns any watches, warnings, advisories or emergencies currently in effect.")]
+    public string GetActiveAlerts(
+        [Description("The unique identifier of the weather station")] string stationId)
+    {
+        var alerts = weatherDataService.GetActiveAlerts(stationId).ToList();
+        if (alerts.Count == 0)
+            return $"No active alerts for station {stationId}. All clear!";
+
+        var alertSummaries = alerts.Select(a =>
+            $"[{a.Severity}] {a.Title}\n  Area: {a.AffectedArea}\n  Expires: {a.ExpiresAt:g}\n  {a.Description}");
+        return $"{alerts.Count} active alert(s) for station {stationId}:\n\n" + string.Join("\n\n", alertSummaries);
+    }
+
+    [McpServerTool]
     [Description("Gets specified weather data for a station in a human-readable format.")]
     public string GetWeatherSummary(
         [Description("The unique identifier of the weather station")] string stationId,
         [Description("Whether to include current conditions in the summary")] bool includeCurrent = true,
         [Description("Whether to include the 5-day forecast in the summary")] bool includeForecast = true,
-        [Description("Whether to include air quality information in the summary")] bool includeAirQuality = false)
+        [Description("Whether to include air quality information in the summary")] bool includeAirQuality = false,
+        [Description("Whether to include active alerts in the summary")] bool includeAlerts = false)
     {
         var summaryParts = new List<string>();
 
@@ -75,6 +90,9 @@ public class WeatherDataTools(IWeatherDataService weatherDataService)
 
         if (includeAirQuality)
             summaryParts.Add(GetAirQuality(stationId));
+
+        if (includeAlerts)
+            summaryParts.Add(GetActiveAlerts(stationId));
 
         return string.Join("\n\n", summaryParts);
     }

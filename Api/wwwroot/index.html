@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AllTheProtocols Weather</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-content">
+      <h1><span class="header-icon">⛅</span> AllTheProtocols Weather</h1>
+      <p class="subtitle">REST · GraphQL · MCP &mdash; one API, every protocol</p>
+    </div>
+  </header>
+
+  <nav id="stations" class="station-bar" aria-label="Weather Stations">
+    <!-- JS populates station cards here -->
+  </nav>
+
+  <main id="dashboard" class="dashboard empty">
+
+    <!-- Empty state (shown before a station is selected) -->
+    <div class="empty-state">
+      <div class="empty-icon">🌍</div>
+      <h2>Select a Station</h2>
+      <p>Choose a weather station above to view live conditions, forecasts, air quality and alerts.</p>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" aria-hidden="true">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- ── CSS-only tab system (radio-button hack) ── -->
+    <input type="radio" name="tab" id="tab-current" class="tab-input" checked>
+    <input type="radio" name="tab" id="tab-daily"   class="tab-input">
+    <input type="radio" name="tab" id="tab-hourly"  class="tab-input">
+    <input type="radio" name="tab" id="tab-air"     class="tab-input">
+    <input type="radio" name="tab" id="tab-alerts"  class="tab-input">
+    <input type="radio" name="tab" id="tab-explorer" class="tab-input">
+
+    <nav class="tab-bar" aria-label="Data sections">
+      <label for="tab-current" class="tab-label">
+        <span class="tab-icon">🌡️</span> Current
+      </label>
+      <label for="tab-daily" class="tab-label">
+        <span class="tab-icon">📅</span> Forecast
+      </label>
+      <label for="tab-hourly" class="tab-label">
+        <span class="tab-icon">🕐</span> Hourly
+      </label>
+      <label for="tab-air" class="tab-label">
+        <span class="tab-icon">🌬️</span> Air Quality
+      </label>
+      <label for="tab-alerts" class="tab-label" data-count="0">
+        <span class="tab-icon">⚠️</span> Alerts
+      </label>
+      <label for="tab-explorer" class="tab-label tab-label-graphql">
+        <span class="tab-icon">◈</span> GraphQL Explorer
+      </label>
+    </nav>
+
+    <div class="tab-panels">
+
+      <!-- ── Current Conditions ── -->
+      <section id="panel-current" class="panel">
+        <div class="conditions-hero">
+          <div class="weather-icon" id="weather-icon" data-condition=""></div>
+          <div class="hero-text">
+            <div class="temperature">
+              <span class="temp-value" id="temp-value">--</span><span class="temp-unit" id="temp-unit">°F</span>
+            </div>
+            <div class="condition-text" id="condition-text">--</div>
+            <div class="feels-like" id="feels-like">Feels like --°F</div>
+            <div class="unit-toggle">
+              <span class="unit-label">°F</span>
+              <input type="checkbox" id="unit-toggle" class="toggle-input" onchange="toggleUnit()">
+              <label for="unit-toggle" class="toggle-track"></label>
+              <span class="unit-label">°C</span>
+              <span class="graphql-badge">via GraphQL</span>
+            </div>
+          </div>
+        </div>
+        <div class="conditions-grid">
+          <div class="metric-card">
+            <div class="metric-label">Humidity</div>
+            <div class="metric-value" id="humidity">--%</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Wind</div>
+            <div class="metric-value" id="wind">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pressure</div>
+            <div class="metric-value" id="pressure">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">UV Index</div>
+            <div class="metric-value" id="uv">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Visibility</div>
+            <div class="metric-value" id="visibility">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Dew Point</div>
+            <div class="metric-value" id="dewpoint">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Precipitation</div>
+            <div class="metric-value" id="precip">--</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Daily Forecast ── -->
+      <section id="panel-daily" class="panel">
+        <div class="forecast-days" id="daily-list">
+          <!-- JS populates day rows here -->
+        </div>
+      </section>
+
+      <!-- ── Hourly Forecast ── -->
+      <section id="panel-hourly" class="panel">
+        <div class="forecast-hours" id="hourly-list">
+          <!-- JS populates hour cards here -->
+        </div>
+      </section>
+
+      <!-- ── Air Quality ── -->
+      <section id="panel-air" class="panel">
+        <div class="aqi-display">
+          <div class="aqi-hero">
+            <div class="aqi-gauge" id="aqi-gauge">
+              <div class="aqi-gauge-bg"></div>
+              <div class="aqi-needle"></div>
+            </div>
+            <div class="aqi-readout">
+              <div class="aqi-number" id="aqi-value">--</div>
+              <div class="aqi-category" id="aqi-category">--</div>
+              <div class="aqi-pollutant">Primary: <span id="aqi-pollutant">--</span></div>
+            </div>
+          </div>
+          <h3 class="section-subtitle">Pollutant Levels</h3>
+          <div class="pollutants-grid" id="pollutants">
+            <!-- JS populates pollutant cards -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Alerts ── -->
+      <section id="panel-alerts" class="panel">
+        <div class="alerts-list" id="alerts-list">
+          <div class="no-alerts">
+            <span class="no-alerts-icon">✓</span>
+            No active alerts for this station.
+          </div>
+        </div>
+      </section>
+
+      <!-- ── GraphQL Explorer ── -->
+      <section id="panel-explorer" class="panel">
+        <div class="explorer-intro">
+          <p>GraphQL lets you request <strong>exactly the fields you need</strong> — no over-fetching. Toggle fields below, then run the query to see it in action.</p>
+        </div>
+        <div class="explorer-layout">
+          <div class="explorer-fields">
+            <h3 class="section-subtitle">Select Fields</h3>
+
+            <div class="field-group">
+              <h4 class="field-group-title">Conditions</h4>
+              <label class="field-check"><input type="checkbox" checked data-field="temperatureF" onchange="updateQueryPreview()"> temperatureF</label>
+              <label class="field-check"><input type="checkbox" checked data-field="feelsLikeF" onchange="updateQueryPreview()"> feelsLikeF</label>
+              <label class="field-check"><input type="checkbox" data-field="humidityPercent" onchange="updateQueryPreview()"> humidityPercent</label>
+              <label class="field-check"><input type="checkbox" data-field="dewPointF" onchange="updateQueryPreview()"> dewPointF</label>
+              <label class="field-check"><input type="checkbox" data-field="pressureMb" onchange="updateQueryPreview()"> pressureMb</label>
+              <label class="field-check"><input type="checkbox" data-field="visibilityMiles" onchange="updateQueryPreview()"> visibilityMiles</label>
+              <label class="field-check"><input type="checkbox" data-field="uvIndex" onchange="updateQueryPreview()"> uvIndex</label>
+              <label class="field-check"><input type="checkbox" checked data-field="skyCondition" onchange="updateQueryPreview()"> skyCondition</label>
+            </div>
+
+            <div class="field-group">
+              <h4 class="field-group-title">Wind</h4>
+              <label class="field-check"><input type="checkbox" checked data-field="wind.speedMph" onchange="updateQueryPreview()"> speedMph</label>
+              <label class="field-check"><input type="checkbox" data-field="wind.direction" onchange="updateQueryPreview()"> direction</label>
+              <label class="field-check"><input type="checkbox" data-field="wind.gustsMph" onchange="updateQueryPreview()"> gustsMph</label>
+            </div>
+
+            <div class="field-group">
+              <h4 class="field-group-title">Precipitation</h4>
+              <label class="field-check"><input type="checkbox" data-field="precipitation.type" onchange="updateQueryPreview()"> type</label>
+              <label class="field-check"><input type="checkbox" data-field="precipitation.amountInches" onchange="updateQueryPreview()"> amountInches</label>
+              <label class="field-check"><input type="checkbox" data-field="precipitation.probabilityPercent" onchange="updateQueryPreview()"> probabilityPercent</label>
+            </div>
+
+            <div class="field-group">
+              <h4 class="field-group-title">Unit (GraphQL-only)</h4>
+              <label class="field-check">
+                <input type="checkbox" id="explorer-celsius" onchange="updateQueryPreview()"> Request in Celsius
+              </label>
+            </div>
+          </div>
+
+          <div class="explorer-output">
+            <h3 class="section-subtitle">Live Query</h3>
+            <pre class="gql-query-preview" id="gql-query">{ currentConditions(stationId: "...") { } }</pre>
+            <button class="run-btn" onclick="runExplorerQuery()">
+              <span class="run-btn-icon">▶</span> Run Query
+            </button>
+            <h3 class="section-subtitle" style="margin-top:1.25rem">Response</h3>
+            <pre class="gql-results" id="gql-results">// Click "Run Query" to see the response</pre>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- .tab-panels -->
+  </main>
+
+  <footer class="site-footer">
+    <p>Powered by <strong>AllTheProtocols API</strong> &mdash; REST &middot; GraphQL &middot; MCP</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
